@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to the BAN-GUN PAGE!</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        h1, h3 {
+            color: #3498db; /* Blue color for headings */
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #2ecc71; /* Green color for buttons */
+            color: white; /* White text for buttons */
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        #stop {
+            background-color: #e74c3c; /* Red color for stop button */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the BAN-GUN page!</h1>
+    <br>
+    <h3>WHEELCHAIR CONTROL</h3>
+    <a href="/forward"><button id="btnForward">FORWARD</button></a>
+    <br>
+    <a href="/left"><button id="btnLeft">LEFT</button></a>
+    <a href="/stop"><button id="stop">STOP</button></a>
+    <a href="/right"><button id="btnRight">RIGHT</button></a>
+    <br>
+    <a href="/back"><button id="btnBackward">BACKWARD</button></a>
+    <br>
+    <a href="/automatic"><button id="btnAutomatic">AUTOMATIC</button></a>
+    <br><br>
+    <button id="startStop">Start Voice Recognition</button>
+    <div id="recognizedText"></div>
+
+    <script>
+        var recognition;
+
+        // Function to start or stop speech recognition
+        function toggleRecognition() {
+            if (!recognition) {
+                // Initialize speech recognition if not already initialized
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.continuous = true;
+                recognition.lang = 'en-US';
+
+                // Event listener for speech recognition result
+                recognition.onresult = function(event) {
+                    var result = event.results[event.results.length - 1][0].transcript.toLowerCase();
+                    console.log('Result:', result);
+                    document.getElementById('recognizedText').innerText = "Recognized: " + result;
+
+                    // Check for commands and trigger actions
+                    if (result.includes('forward')) {
+                        document.getElementById('btnForward').click();
+                    } else if (result.includes('left')) {
+                        document.getElementById('btnLeft').click();
+                    } else if (result.includes('stop')) {
+                        document.getElementById('stop').click();
+                    } else if (result.includes('right')) {
+                        document.getElementById('btnRight').click();
+                    } else if (result.includes('backward')) {
+                        document.getElementById('btnBackward').click();
+                    } else if (result.includes('automatic')) {
+                        document.getElementById('btnAutomatic').click();
+                    }
+                };
+
+                // Event listener for speech recognition error
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                };
+            }
+
+            // Toggle start/stop recognition
+            if (recognition && recognition.running) {
+                recognition.stop();
+                document.getElementById('startStop').innerText = "Start Voice Recognition";
+            } else {
+                recognition.start();
+                document.getElementById('startStop').innerText = "Stop Voice Recognition";
+            }
+        }
+
+        // Event listener for start/stop button
+        document.getElementById('startStop').addEventListener('click', toggleRecognition);
+    </script>
+</body>
+</html>
